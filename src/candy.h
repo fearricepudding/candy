@@ -6,6 +6,7 @@
 class Candy {
 public: 
     Candy();
+    Candy(bool);
     ~Candy();
     can_frame recieve();
     int send();
@@ -20,4 +21,5 @@ private:
     std::string error;
     bool _connected;
     int s;
+    bool _debug;
 };

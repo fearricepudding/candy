@@ -16,8 +16,15 @@ Candy::Candy() {
     std::cout << "[*] Starting candy" << std::endl;
     this->error = "";
     this->_connected = false;
-
+    this->_debug = false;
 };
+
+Candy::Candy(bool debug) {
+    std::cout << "[DEBUG] Starting candy in DEBUG mode" << std::endl;
+    this->_debug = true;
+    this->error = "";
+    this->_connected = false;
+}
 
 Candy::~Candy() {
     this->closeCanLink();
@@ -25,6 +32,10 @@ Candy::~Candy() {
 
 void Candy::setup() {
     std::cout << "[*] Starting can link" << std::endl;
+    if (this->_debug) {
+        std::cout << "[DEBUG] skipping setup" << std::endl;
+        return;
+    };
     int status = this->setupCanLink();
     if(status != 0){
         std::cout << this->error << std::endl;
@@ -33,6 +44,9 @@ void Candy::setup() {
 
 void Candy::shutdown() {
     std::cout << "[*] Closing can link" << std::endl;
+    if (this->_debug) {
+        return;
+    };
     this->closeCanLink();
 };
 
@@ -86,10 +100,14 @@ bool Candy::isConnected(){
 
 can_frame Candy::recieve() {
     std::cout << "Listening for can data" << std::endl;
-    int nbytes;
+
     struct can_frame frame;
-    
-    memset(&frame, 0, sizeof(struct can_frame));
+    memset(&frame, 0, sizeof(frame));
+
+    if (this->_debug) {
+        // Send empty frame
+        return frame;
+    };
 
     //4.Define receive rules
     //struct can_filter rfilter[1];
@@ -97,6 +115,7 @@ can_frame Candy::recieve() {
     //rfilter[0].can_mask = CAN_SFF_MASK;
     //setsockopt(this->s, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
 
+    int nbytes;
     while(1) {
         nbytes = read(this->s, &frame, sizeof(frame));
         if(nbytes > 0) {
