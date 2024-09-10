@@ -38,6 +38,7 @@ void Candy::setup() {
     std::cout << "[*] Starting can link" << std::endl;
     if (this->_debug) {
         std::cout << "[DEBUG] skipping setup" << std::endl;
+        this->_connected = true;
         return;
     };
     int status = this->setupCanLink();
