@@ -21,7 +21,7 @@ Candy::Candy() {
 
 Candy::Candy(bool debug) {
     std::cout << "[DEBUG] Starting candy in DEBUG mode" << std::endl;
-    this->_debug = true;
+    this->_debug = debug;
     this->error = "";
     this->_connected = false;
 }
