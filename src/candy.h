@@ -6,7 +6,9 @@
 class Candy {
 public: 
     Candy();
+    Candy(int);
     Candy(bool);
+    Candy(bool, int);
     ~Candy();
     can_frame recieve();
     int send();
@@ -22,4 +24,5 @@ private:
     bool _connected;
     int s;
     bool _debug;
+    int _bitrate;
 };

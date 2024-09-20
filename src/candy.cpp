@@ -12,14 +12,13 @@
 
 #include "candy.h"
 
-Candy::Candy() {
-    std::cout << "[*] Starting candy" << std::endl;
-    this->error = "";
-    this->_connected = false;
-    this->_debug = false;
-};
+Candy::Candy() : Candy(false, 10400) {};
 
-Candy::Candy(bool debug) {
+Candy::Candy(int bitrate) : Candy(false, bitrate) {};
+
+Candy::Candy(bool debug) : Candy(debug, 10400) {};
+
+Candy::Candy(bool debug, int bitrate) {
     if (debug) {
         std::cout << "[DEBUG] Starting candy in DEBUG mode" << std::endl;
     } else {
@@ -65,7 +64,9 @@ int Candy::setupCanLink() {
     int ret;
 
     std::cout << "Setting up can link" << std::endl;
-    system("sudo ip link set can0 type can bitrate 10400");
+    std::string setupCommand = "sudo ip link set can0 type can bitrate " + std::to_string(this->_bitrate);
+    // system("sudo ip link set can0 type can bitrate 10400");
+    system(setupCommand.c_str());
     system("sudo ifconfig can0 up");
 
     this->s = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -111,6 +112,7 @@ can_frame Candy::recieve() {
 
     if (this->_debug) {
         // Send empty frame
+        // TODO: Build random frame
         return frame;
     };
 
