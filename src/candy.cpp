@@ -27,6 +27,7 @@ Candy::Candy(bool debug, int bitrate) {
     this->_debug = debug;
     this->error = "";
     this->_connected = false;
+    this->_bitrate = bitrate;
 }
 
 Candy::~Candy() {
