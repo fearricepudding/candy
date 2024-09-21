@@ -63,7 +63,7 @@ int Candy::setupCanLink() {
     struct ifreq ifr;
     int ret;
 
-    std::cout << "Setting up can link" << std::endl;
+    std::cout << "[*] Setting up can0 link with bitrate " << this->_bitrate << std::endl;
     std::string setupCommand = "sudo ip link set can0 type can bitrate " + std::to_string(this->_bitrate);
     // system("sudo ip link set can0 type can bitrate 10400");
     system(setupCommand.c_str());
@@ -105,8 +105,6 @@ bool Candy::isConnected(){
 };
 
 can_frame Candy::recieve() {
-    std::cout << "Listening for can data" << std::endl;
-
     struct can_frame frame;
     memset(&frame, 0, sizeof(frame));
 
