@@ -10,7 +10,7 @@ public:
     Candy(bool);
     Candy(bool, int);
     ~Candy();
-    can_frame recieve();
+    canfd_frame recieve();
     int send();
     void setup();
     void shutdown();

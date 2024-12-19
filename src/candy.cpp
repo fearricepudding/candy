@@ -105,8 +105,8 @@ bool Candy::isConnected(){
     return this->_connected;
 };
 
-can_frame Candy::recieve() {
-    struct can_frame frame;
+canfd_frame Candy::recieve() {
+    struct canfd_frame frame;
     memset(&frame, 0, sizeof(frame));
 
     if (this->_debug) {
@@ -125,10 +125,7 @@ can_frame Candy::recieve() {
     while(1) {
         nbytes = read(this->s, &frame, sizeof(frame));
         if(nbytes > 0) {
-            printf("can_id = 0x%X\r\ncan_dlc = %d \r\n", frame.can_id, frame.can_dlc);
             int i = 0;
-            for(i = 0; i < 8; i++)
-                printf("data[%d] = %d\r\n", i, frame.data[i]);
             return frame;
         };
     };
@@ -136,15 +133,14 @@ can_frame Candy::recieve() {
 
 int Candy::send() {
     int nbytes;
-    struct can_frame frame;
-    memset(&frame, 0, sizeof(struct can_frame));
+    struct canfd_frame frame;
+    memset(&frame, 0, sizeof(struct canfd_frame));
 
     //4.Disable filtering rules, do not receive packets, only send
     setsockopt(this->s, SOL_CAN_RAW, CAN_RAW_FILTER, NULL, 0);
 
     //5.Set send data
     frame.can_id = 0x123;
-    frame.can_dlc = 8;
     frame.data[0] = 1;
     frame.data[1] = 2;
     frame.data[2] = 3;
@@ -153,12 +149,6 @@ int Candy::send() {
     frame.data[5] = 6;
     frame.data[6] = 7;
     frame.data[7] = 8;
-
-    printf("can_id  = 0x%X\r\n", frame.can_id);
-    printf("can_dlc = %d\r\n", frame.can_dlc);
-    int i = 0;
-    for(i = 0; i < 8; i++)
-        printf("data[%d] = %d\r\n", i, frame.data[i]);
 
     //6.Send message
     nbytes = write(this->s, &frame, sizeof(frame));
