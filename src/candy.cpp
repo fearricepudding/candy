@@ -9,12 +9,15 @@
 #include <linux/can/raw.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "candy.h"
 
 Candy::Candy() : Candy(false, 10400) {};
 
 Candy::Candy(int bitrate) : Candy(false, bitrate) {};
+
+Candy::Candy(int bitrate, int datarate) : Candy(false, bitrate, datarate) {};
 
 Candy::Candy(bool debug) : Candy(debug, 10400) {};
 
@@ -28,6 +31,12 @@ Candy::Candy(bool debug, int bitrate) {
     this->error = "";
     this->_connected = false;
     this->_bitrate = bitrate;
+    this->_fd = false;
+}
+
+Candy::Candy(bool debug, int bitrate, int datarate) : Candy(debug, bitrate) {
+    this->_fd = true;
+    this->_datarate = datarate;
 }
 
 Candy::~Candy() {
@@ -64,10 +73,14 @@ int Candy::setupCanLink() {
     struct ifreq ifr;
     int ret;
 
+    std::stringstream setupCommand;
     std::cout << "[*] Setting up can0 link with bitrate " << this->_bitrate << std::endl;
-    std::string setupCommand = "sudo ip link set can0 type can bitrate " + std::to_string(this->_bitrate);
-    // system("sudo ip link set can0 type can bitrate 10400");
-    system(setupCommand.c_str());
+    setupCommand << "sudo ip link set can0 type can bitrate " << std::to_string(this->_bitrate);
+    if (this->_fd) {
+        setupCommand << " dbitrate " << this->_datarate << " fd on";
+    };
+    std::cout << "[%] " << setupCommand.str() << std::endl;
+    system(setupCommand.str().c_str());
     system("sudo ifconfig can0 up");
 
     this->s = socket(PF_CAN, SOCK_RAW, CAN_RAW);

@@ -9,6 +9,8 @@ public:
     Candy(int);
     Candy(bool);
     Candy(bool, int);
+    Candy(int, int);
+    Candy(bool, int, int);
     ~Candy();
     canfd_frame recieve();
     int send();
@@ -24,5 +26,7 @@ private:
     bool _connected;
     int s;
     bool _debug;
+    bool _fd;
     int _bitrate;
+    int _datarate;
 };
